@@ -76,7 +76,10 @@ p {
   width: 400px;
 }
 
-
+h5, h6 {
+ display: inline;
+}
+}
 
 </style>
 
@@ -101,68 +104,46 @@ p {
         <div class="card-body">
             <div class="technical">
 
-                {{ self.date }}&nbsp;&nbsp;
-                {{ self.width }}&nbsp;x&nbsp;{{ self.height }} &nbsp; cm
+                <i class='fas fa-calendar-alt'></i>&nbsp;{{ self.date }}&nbsp;&nbsp;
+                <i class="fas fa-ruler-combined"></i>&nbsp;{{ self.width }}&nbsp;x&nbsp;{{ self.height }}&nbsp;cm
+                <br>
 
-                {% for block in page.technical_details %}
-
-                <div class="block-{{ block.block_type }}">
-                    {% include_block block %}
-                </div>
-                {% endfor %}
-
-                {{ block_type.support }}
-
-            {% if page.tags.all.count %}
-                <div class="tags">
-                    <h5>Tags</h5>
-                    {% for tag in page.tags.all %}
-                        <a href="{% routablepageurl painting_index_page 'post_by_tag' tag.slug %}">{{ tag }}</a>
-                    {% endfor %}
-                </div>
-            {% endif %}
-
-         <!--           Meta Details-->
-                <h5>Meta:</h5>
-
-                {% if self.date %}
-                {{ self.date }}
-                {% endif %}
-
-
-                 <!--           Category-->
-            {% with categories=page.categories.all %}
+                <!--           Category-->
+                {% with categories=page.categories.all %}
                 {% if categories %}
-                    <h5>Categories</h5>
-                    <ul>
-                        {% for category in categories %}
-                            <li style="display: inline">
-                                <a href="{% routablepageurl painting_index_page 'post_by_category' category.slug %}">{{ category.name }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            {% endwith %}
 
-                <!--           Location-->
-                {% with locations=page.locations.all %}
-                {% if locations %}
-                {% for loc in self.locations.all %}
-                    <h5>Location</h5><a href="{{ self.get_parent.url }}?location={{ loc.slug }}">
-                    {{ loc.name }}
-                </a>
-
-                {% endfor %}
+                {% for category in categories %}
+<!--                <h6>Category:</h6>-->
+                        <a href="{% routablepageurl painting_index_page 'post_by_category' category.slug %}">
+                            {{ category.name }}</a>
+                    {% endfor %}
                 {% endif %}
                 {% endwith %}
 
                 <br>
+                <!--           Location-->
+                {% with locations=page.locations.all %}
+                {% if locations %}
+                {% for loc in self.locations.all %}
+                <i class='fas fa-globe'></i>
+<!--                <h6>Location</h6>-->
+                <a href="{{ self.get_parent.url }}?location={{ loc.slug }}">
+                {{ loc.name }}
+            </a>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                &nbsp;&nbsp;
+<!--                <h6>Technique:</h6>-->
+                <i class='fas fa-paint-brush'></i>
                 {% for med in self.medium.all %}
-                {% for sup in self.support.all %}
                 <a href="{{ self.get_parent.url }}?medium={{ med.slug }}">
                     {{ med.name }}
-                    <href
-                    ="{{ self.get_parent.url }}?support={{ sup.slug }}">sur
+                </a>
+                sur
+                {% for sup in self.support.all %}
+                <a href="{{ self.get_parent.url }}?support={{ sup.slug }}">
                     {{ sup.name }}</herf>
                 </a>
                 {% endfor %}
@@ -171,27 +152,62 @@ p {
             </div>
 
             <br>
+            <br>
             {% for block in page.description %}
 
             <div class="mt-30">
                 <div class="block-{{ block.block_type }}">
                     <h5>Description:</h5>
                     <p style="width:200px">
-                    {{ block.value }}
+                        {{ block.value }}
                     </p>
                 </div>
             </div>
 
             {% endfor %}
 
+            <br>
+            <br>
+
+
+            <div class="tags">
+            {# Check if there are tags #}
+                <h6>Tags:</h6>
+                <br>
+        {% if page.tags.count %}
+        {% for tag in page.tags.all %}
+        {# Loop through all the existing tags #}
+        <a href="{{ self.get_parent.url }}?tag={{ tag.slug }}">{{ tag }}</a>&nbsp;&nbsp;
+        {% endfor %}
+        {% endif %}
+           </div>
+
+            <br>
+            <div class="tags">
+            {# Check if there are tags #}
+                <h6>Links:</h6>
+                <br>
+                {% for block in page.links %}
+        {% include_block block %}
+    {% endfor %}
+           </div>
         </div>
 
+        </div>
+
+
     </div>
 
 
-    <div class="card-footer">
-        Put tags here
-    </div>
+<!--    <div class="card-footer">-->
+<!--        {# Check if there are tags #}-->
+<!--        {% if page.tags.count %}-->
+<!--        {% for tag in page.tags.all %}-->
+<!--        {# Loop through all the existing tags #}-->
+<!--        <a href="{{ self.get_parent.url }}?tag={{ tag.slug }}">{{ tag }}</a><br/>-->
+<!--        {% endfor %}-->
+<!--        {% endif %}-->
+<!--    </div>-->
 
 
 </div>

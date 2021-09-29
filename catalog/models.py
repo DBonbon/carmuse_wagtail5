@@ -157,12 +157,6 @@ class PaintingDetailPage(Page):
     painter = models.ForeignKey(
         'wagtailcore.Page', on_delete=models.SET_NULL, blank=True, null=True, related_name='+')
 
-
-    technical_details = StreamField([
-        ('date', DateBlock(null=True, blank=True)),
-        ('motif', ChoiceBlock(choices=MOTIF_TYPES, help_text='The subject-matter')),
-        ('dimensions', blocks.DimensionBlock()),
-    ], null=True, blank=True)
     date = models.DateField(null=True, blank=True)
     width = models.FloatField(null=True, blank=True)
     height = models.FloatField(null=True, blank=True)
@@ -205,7 +199,6 @@ class PaintingDetailPage(Page):
 
         PageChooserPanel('painter'),    # ('painter', 'painter.PainterPage'),
         StreamFieldPanel("description"),
-        StreamFieldPanel('technical_details'),
         FieldPanel('date'),
         MultiFieldPanel(
             [
