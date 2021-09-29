@@ -146,7 +146,7 @@ class DimensionBlock(blocks.StructBlock):
     height = blocks.FloatBlock(null=True, blank=True, help_text="(Optional) Enter painting's length")
 
     class Meta:  # noqa
-        template = "streams/dimension_block.html"
+        #template = "streams/dimension_block.html"
         icon = "placeholder"
         label = "Dimensions"
 

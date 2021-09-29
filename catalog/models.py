@@ -28,6 +28,30 @@ from streams import blocks
 
 # ATTRIBUTES
 
+# CATEGORY
+class PaintingCategory(models.Model):
+    """Painting catgory for a snippet."""
+
+    name = models.CharField(max_length=255)
+    slug = AutoSlugField(
+        populate_from="name",
+        editable=True
+    )
+
+    panels = [
+        FieldPanel("name"),
+        FieldPanel("slug"),
+    ]
+
+    class Meta:
+        verbose_name = "Painting Category"
+        verbose_name_plural = "Painting Categories"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+register_snippet(PaintingCategory)
+
 
 # Location
 class PaintingLocation(models.Model):
@@ -77,8 +101,8 @@ class PaintingIndexPage(RoutablePageMixin, Page):
 
     def get_context(self, request, *args, **kwargs):
         context = super(PaintingIndexPage, self).get_context(request, *args, **kwargs)
-        context['painting_index_page'] = self
         context['posts'] = self.posts
+        context['painting_index_page'] = self
         return context
 
     def get_posts(self):
@@ -91,24 +115,12 @@ class PaintingIndexPage(RoutablePageMixin, Page):
         self.posts = self.get_posts().filter(tags__slug=tag)
         return Page.serve(self, request, *args, **kwargs)
 
-    # @route(r'^category/(?P<category>[-\w]+)/$')
-    # def post_by_category(self, request, category, *args, **kwargs):
-    #     self.filter_type = 'category'
-    #     self.filter_term = category
-    #     self.posts = self.get_posts().filter(painting_categories__slug=category)
-    #     return self.render(request)
-
     @route(r'^category/(?P<category>[-\w]+)/$')
     def post_by_category(self, request, category, *args, **kwargs):
-        self.posts = self.get_posts().filter(categories__painting_category__slug=category)
-        return self.render(request)
-
-    # @route(r'^category/(?P<category>[-\w]+)/$')
-    # def post_by_category(self, request, category, *args, **kwargs):
-    #     self.search_type = 'category'
-    #     self.search_term = category
-    #     self.posts = self.get_posts().filter(categories_paianting_category__slug=category)
-    #     return Page.serve(self, request, *args, **kwargs)
+        self.search_type = 'category'
+        self.search_term = category
+        self.posts = self.get_posts().filter(categories__slug=category)
+        return Page.serve(self, request, *args, **kwargs)
 
     @route(r'^$')
     def post_list(self, request, *args, **kwargs):
@@ -151,8 +163,12 @@ class PaintingDetailPage(Page):
         ('motif', ChoiceBlock(choices=MOTIF_TYPES, help_text='The subject-matter')),
         ('dimensions', blocks.DimensionBlock()),
     ], null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
+    width = models.FloatField(null=True, blank=True)
+    height = models.FloatField(null=True, blank=True)
+    motif = ChoiceBlock(choices=MOTIF_TYPES, help_text='The subject-matter')
     tags = ClusterTaggableManager(through="catalog.PaintingPageTag", blank=True)
-    #categories = ParentalManyToManyField("catalog.PaintingCategory", blank=True)
+    categories = ParentalManyToManyField("catalog.PaintingCategory", blank=True)
     locations = ParentalManyToManyField("catalog.PaintingLocation", blank=True)
     medium = ParentalManyToManyField("catalog.PaintingMedium", blank=True)
     support = ParentalManyToManyField("catalog.PaintingSupport", blank=True)
@@ -190,21 +206,29 @@ class PaintingDetailPage(Page):
         PageChooserPanel('painter'),    # ('painter', 'painter.PainterPage'),
         StreamFieldPanel("description"),
         StreamFieldPanel('technical_details'),
-
+        FieldPanel('date'),
         MultiFieldPanel(
-            [StreamFieldPanel('technical_details')]
+            [
+                FieldPanel("width"),
+                FieldPanel("height")
+            ],
+            heading="Dimensions",
+            classname="collapsible collapsed",
         ),
-        FieldPanel("tags"),
 
-        InlinePanel("painting_categories", label="category"),
 
         # MultiFieldPanel(
-        #     [
-        #         FieldPanel("categories", widget=forms.CheckboxSelectMultiple)
-        #     ],
-        #     heading="Categories",
-        #     classname="collapsible collapsed",
+        #    [StreamFieldPanel('technical_details')]
         # ),
+        FieldPanel("tags"),
+
+        MultiFieldPanel(
+            [
+                FieldPanel("categories", widget=forms.CheckboxSelectMultiple)
+            ],
+            heading="Categories",
+            classname="collapsible collapsed",
+        ),
 
         MultiFieldPanel([
             FieldPanel('locations', widget=forms.CheckboxSelectMultiple),
@@ -232,55 +256,14 @@ class PaintingDetailPage(Page):
     ]
 
     @property
-    # def painting_index_page(self):
-    #     return self.get_parent().specific
-    #
-    # def get_context(self, request, *args, **kwargs):
-    #     context = super(PaintingDetailPage, self).get_context(request, *args, **kwargs)
-    #     context['painting_index_page'] = self.painting_index_page
-    #     context['post'] = self
-    #     return context
+    def painting_index_page(self):
+        return self.get_parent().specific
 
     def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request, *args, **kwargs)
-        context['painting_index_page'] = self.get_parent().specific
+        context = super(PaintingDetailPage, self).get_context(request, *args, **kwargs)
+        context['painting_index_page'] = self.painting_index_page
+        context['post'] = self
         return context
-
-
-
-# CATEGORY
-class PaintingPagePaintingCategory(models.Model):
-    page = ParentalKey(
-        "catalog.PaintingDetailPage", on_delete=models.CASCADE, related_name="painting_categories"
-    )
-    painting_category = models.ForeignKey(
-        "catalog.PaintingCategory", on_delete=models.CASCADE, related_name="painting_pages"
-    )
-
-    panels = [
-        SnippetChooserPanel("painting_category"),
-    ]
-
-    class Meta:
-        unique_together = ("page", "painting_category")
-
-
-@register_snippet
-class PaintingCategory(models.Model):
-    name = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, max_length=80)
-
-    panels = [
-        FieldPanel("name"),
-        FieldPanel("slug"),
-    ]
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        verbose_name = "Painting Category"
-        verbose_name_plural = "Painting Categories"
 
 
 
@@ -288,17 +271,10 @@ class PaintingCategory(models.Model):
 class PaintingPageTag(TaggedItemBase):
     content_object = ParentalKey(
         'PaintingDetailPage',
-        related_name='painting_tags',
+        related_name='tagged_items',
         on_delete=models.CASCADE,
     )
 
-#class PostPageTag(TaggedItemBase):
-#    content_object = ParentalKey("PaintingDetailPage", related_name="painting_tags")
-
-# @register_snippet
-# class Tag(TaggitPaintingTag):
-#     class Meta:
-#         proxy = True
 
 
 
@@ -351,32 +327,3 @@ class PaintingMedium(models.Model):
 
     def __str__(self):
         return self.name
-
-
-
-
-
-
-# class PaintingCategory(models.Model):
-#     """Painting catgory for a snippet."""
-#
-#     name = models.CharField(max_length=255)
-#     slug = AutoSlugField(
-#         populate_from="name",
-#         editable=True
-#     )
-#
-#     panels = [
-#         FieldPanel("name"),
-#         FieldPanel("slug"),
-#     ]
-#
-#     class Meta:
-#         verbose_name = "Painting Category"
-#         verbose_name_plural = "Painting Categories"
-#         ordering = ["name"]
-#
-#     def __str__(self):
-#         return self.name
-# register_snippet(PaintingCategory)
-
