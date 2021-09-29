@@ -53,6 +53,7 @@ body{
 .painting-subtitle {
     text-decoration: underline red;
 }
+
 .underline:before {
     content: '';
     position: absolute;
@@ -79,7 +80,7 @@ p {
 h5, h6 {
  display: inline;
 }
-}
+
 
 </style>
 
@@ -98,11 +99,13 @@ h5, h6 {
         <div class="card-header">
             <h3>{{ self.title }}</h3>
 
-            <h6 class="painting-subtitle">{{ self.painter }}</h6>
+            <a href="{% pageurl page.painter %}"
+                class="painting-subtitle">{{ self.painter}}</a>
+
         </div>
 
         <div class="card-body">
-            <div class="technical">
+            <div class="meta">
 
                 <i class='fas fa-calendar-alt'></i>&nbsp;{{ self.date }}&nbsp;&nbsp;
                 <i class="fas fa-ruler-combined"></i>&nbsp;{{ self.width }}&nbsp;x&nbsp;{{ self.height }}&nbsp;cm

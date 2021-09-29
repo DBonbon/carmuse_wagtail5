@@ -44,11 +44,20 @@ class PaintersPage(Page):
 
     def serve(self, request):
         """Custom serve method"""
-        painter_list = PainterPage.objects.live().order_by('first_name')
-        return render(request, 'painters/painters_index.html', {
+        painter_list = PainterPage.objects.live().order_by('title')
+        return render(request, 'painter/painters_page.html', {
             'page': self,
             'painter_list': painter_list
         })
+
+    def get_context(self, request, *args, **kwargs):
+        context = super(PaintersPage, self).get_context(request, *args, **kwargs)
+        context['posts'] = self.posts
+        context['painters_page'] = self
+        return context
+
+    def get_posts(self):
+        return PainterPage.objects.descendant_of(self).live()
 
 
 
@@ -84,7 +93,7 @@ class PainterPage(Page):
     content_panels = Page.content_panels + [
         ImageChooserPanel('painter_image'),
         StreamFieldPanel('artist_names'),
-        #StreamFieldPanel('artist_dates'),
+        StreamFieldPanel('artist_dates'),
         FieldPanel('bio'),
         FieldPanel('pitch'),
         #StreamFieldPanel('artist_links'),

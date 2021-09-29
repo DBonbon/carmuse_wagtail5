@@ -27,6 +27,9 @@ body{
   background-color: #202020  !important;
 }
 
+.card-header{
+    border-bottom: 0px;
+}
 
 .overlay {
   position: absolute;
@@ -47,7 +50,35 @@ body{
   height: 2vw;
 }
 
+.painting-subtitle {
+    text-decoration: underline cyan;
+}
+.underline:before {
+    content: '';
+    position: absolute;
+    display: block;
+    /* you can adjust the properties to your liking */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-bottom: 1px solid #5fca66;
+}
 
+a {
+  color: white;
+}
+
+a:hover {
+  color: hotpink;
+}
+
+p {
+  width: 400px;
+}
+
+h5, h6 {
+ display: inline;
+}
 
 
 </style>
@@ -72,49 +103,46 @@ body{
         {% endif %}
         {% endfor %}
 
+        <div class="card-header">
         {% for block in page.artist_names %}
         <div class="block-{{ block.block_type }}">
             <h3>{{ block.value.first_name}}&nbsp;{{ block.value.last_name}}</h3>
         </div>
         {% endfor %}
+
+        <header class="painting-subtitle">{{ self.pitch|richtext|truncatewords:15 }}</header>
+        </div>
+
+        <div class="card-body">
+
         {% for block in page.artist_dates %}
         <div class="block-{{ block.block_type }}">
             <h6>{{ block.value.date_of_birth }}&nbsp;-&nbsp;{{ block.value.date_of_death }}</h6>
         </div>
         {% endfor %}
-        <p class="card-subtitle text-center">{{ self.pitch|richtext|truncatewords:15 }}</p>
+
+
+        <br>
+            <br>
         <div>
             <h6>Bio:</h6>
             <p class="card-subtitle text-center">{{ self.bio|richtext }}</p>
         </div>
 
-        {% for block in page.artist_links %}
-        {% if block.block_type == 'artist_links' %}
+        <br>
+        <br>
+
+        {% if page.links %}
         <h6>Links:</h6>
         {% endif %}
+        {% for block in page.links %}
+
         <div class="block-{{ block.block_type }}">
             {% include_block block.value %}
         </div>
         {% endfor %}
 
-
-<!--        <div class="d-flex justify-content-center">-->
-<!--            {% for iter in self.painter_links.all %}-->
-<!--            <div>-->
-<!--                {% if iter.link.link_name %}-->
-<!--                <a href="{{ iter.link.link_name }}">-->
-<!--                    {{ iter.link.link.url }}-->
-<!--                </a>-->
-<!--                {% else %}-->
-<!--                {##}-->
-<!--                {% endif %}-->
-<!--            </div>-->
-<!--            {% endfor %}-->
-<!--        </div>-->
-
-
-
-<!--    </div>-->
+        </div>
 
 
 </div>

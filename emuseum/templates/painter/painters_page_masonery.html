@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load wagtailimages_tags wagtailroutablepage_tags wagtailcore_tags %}
+
+{% block content %}
+
+
+<div class="container">
+    <!--       <div class="container mb-sm-5 mt-sm-5">-->
+    <h1 class="text-center mb-sm-5">{{ self.title }}</h1>
+
+
+
+    <div class="col-12">
+
+        <div class="card-columns">
+            {% for painter in painter_list %}
+            {% image painter.painter_image width-350 as img %}
+
+
+                <div class="card">
+                    <img src="{{ img.url }}" alt="{{ img.alt }}" class="painter-img-top"/>
+                    <div class="card-img-overlay text-white">
+                           <div class="text-center">
+                        <h5>{{ painter.title }}</h5>
+                            </div>
+
+                        <div class="card-body text-center">
+                            <a href="{% pageurl painter %}">
+                                <i class='fas fa-expand fa-3x'></i>
+                                </a>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            {% endfor %}
+
+    </div>
+</div>
+{% endblock %}
