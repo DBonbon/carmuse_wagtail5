@@ -2,7 +2,10 @@
 {% load wagtailcore_tags %}
 
 {% block content %}
-    {{ self.subtitle }} is subtitle
+
+    <div class="text-center mb-sm-5">
+    <h1>{{ self.subtitle }}</h1>
+
 
     {% for block in page.content %}
         {% include_block block %}
@@ -10,4 +13,5 @@
     {% for block in page.body %}
         {% include_block block with block_id=block.id %}
     {% endfor %}
+</div>
 {% endblock %}

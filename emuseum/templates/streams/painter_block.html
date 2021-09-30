@@ -1,0 +1,14 @@
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% for block in blocks %}
+    {% if block.block_type == 'image' %}
+        <div class="block-{{ block.block_type }}">
+            <!-- make use of specific properties of Wagtail 'image' tag -->
+                 {% image block.value width-900 class="img-responsive" %}
+        </div>
+   {% else %}
+        <div class="block-{{ block.block_type }}">
+            {% include_block block %}
+        </div>
+    {% endif %}
+{% endfor %}
