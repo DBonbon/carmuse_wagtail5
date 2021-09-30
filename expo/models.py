@@ -141,7 +141,7 @@ class ExpoPageGalleryImage(Orderable):
     image = models.ForeignKey(
         'wagtailimages.Image', on_delete=models.CASCADE, related_name='+'
     )
-    caption = models.CharField(blank=True, max_length=250)
+    caption = models.TextField(blank=True)
 
     panels = [
         ImageChooserPanel('image'),

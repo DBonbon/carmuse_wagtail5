@@ -39,6 +39,7 @@ INSTALLED_APPS = [
 
     'wagtail.contrib.forms',
     'wagtail.contrib.modeladmin',
+    'wagtailmenus',
     'wagtail.contrib.redirects',
     "wagtail.contrib.routable_page",
     'wagtail.embeds',
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     'wagtail.search',
     'wagtail.admin',
     'wagtail.core',
+
 
     'modelcluster',
     'taggit',
@@ -93,6 +95,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'wagtailmenus.context_processors.wagtailmenus',
             ],
         },
     },

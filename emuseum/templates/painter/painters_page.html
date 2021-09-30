@@ -3,38 +3,54 @@
 
 {% block content %}
 
+<style>
+.card-icon {
+  color: transparent;
+}
+
+.card-icon:hover {
+  color: PaleVioletRed;
+}
+
+.card-title {
+  color: white;
+  text-shadow:
+   -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+     1px 1px 0 #000;
+}
+
+</style>
 
 <div class="container">
-    <!--       <div class="container mb-sm-5 mt-sm-5">-->
     <h1 class="text-center mb-sm-5">{{ self.title }}</h1>
 
-
-
     <div class="row justify-content-center">
+        <div class="card-columns center">
+        {% for painter in painter_list %}
+            {% image painter.painter_image fill-300x300 as img %}
 
-        <div class="col-md-6 col-lg-4 mb-4">
-            {% for painter in painter_list %}
-            {% image painter.painter_image width-350 as img %}
+                <div class="card" style="width: 18rem;">
+                    <img src="{{ img.url }}" alt="{{ img.alt }}" class="painter-img-fluid w-100 rounded"/>
 
-
-                <div class="card">
-                    <img src="{{ img.url }}" alt="{{ img.alt }}" class="painter-img-top"/>
-                    <div class="card-img-overlay text-white">
-                           <div class="text-center">
-                        <h5>{{ painter.title }}</h5>
-                            </div>
-
-                        <div class="card-body text-center">
+                    <div class="card-img-overlay text-center">
+                        <div class="card-title">{{ painter.title }}</div>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
                             <a href="{% pageurl painter %}">
-                                <i class='fas fa-expand fa-3x'></i>
+                                <i class='card-icon text-centered fas fa-expand fa-3x'></i>
                                 </a>
-                        </div>
+
 
                     </div>
-                </div>
 
-
+</div>
             {% endfor %}
+
+        </div>
 
     </div>
 </div>
